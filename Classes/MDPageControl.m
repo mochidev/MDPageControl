@@ -94,6 +94,8 @@ static __inline__ CGFloat MDPCPixel()
 - (id)initWithFrame:(CGRect)frame
 {
     if (self = [super initWithFrame:frame]) {
+        self.opaque = NO;
+        self.backgroundColor = nil;
         [self _performInit];
     }
     return self;
