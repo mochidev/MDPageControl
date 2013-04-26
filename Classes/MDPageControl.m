@@ -61,6 +61,7 @@ static __inline__ CGFloat MDPCPixel()
 - (UIImage *)_indicatorImageForPage:(NSUInteger)page;
 - (CGRect)_rectForPage:(NSUInteger)page;
 - (UIImage *)_tintedImage:(UIImage *)image withColor:(UIColor *)color maskedOffset:(CGPoint)offset;
+- (void)setCurrentPage:(CGFloat)currentPage updateScrollView:(BOOL)yn;
 
 @end
 
@@ -143,9 +144,18 @@ static __inline__ CGFloat MDPCPixel()
 
 - (void)setCurrentPage:(CGFloat)currentPage
 {
+    [self setCurrentPage:currentPage updateScrollView:YES];
+}
+
+- (void)setCurrentPage:(CGFloat)currentPage updateScrollView:(BOOL)yn;
+{
     if (_currentPage != currentPage) {
         _currentPage = currentPage;
         [self setNeedsDisplay];
+    }
+    
+    if (yn) {
+        [_scrollView setContentOffset:CGPointMake(_currentPage*_scrollView.bounds.size.width, _scrollView.contentOffset.y) animated:YES];
     }
 }
 
@@ -195,7 +205,7 @@ static __inline__ CGFloat MDPCPixel()
     _scrollView = scrollView;
     
     if (scrollView) {
-        self.currentPage = scrollView.contentOffset.x/scrollView.frame.size.width;
+        [self setCurrentPage:scrollView.contentOffset.x/scrollView.frame.size.width updateScrollView:NO];
         self.numberOfPages = roundf(scrollView.contentSize.width/scrollView.frame.size.width);
         
         [scrollView addObserver:self forKeyPath:@"contentOffset" options:NSKeyValueObservingOptionNew context:NULL];
@@ -259,7 +269,7 @@ static __inline__ CGFloat MDPCPixel()
         UIScrollView *scrollView = object;
         CGPoint contentOffset = [(NSValue *)[change objectForKey:NSKeyValueChangeNewKey] CGPointValue];
         
-        self.currentPage = contentOffset.x/scrollView.frame.size.width;
+        [self setCurrentPage:contentOffset.x/scrollView.frame.size.width updateScrollView:NO];
     } else if ([keyPath isEqualToString:@"contentSize"]) {
         UIScrollView *scrollView = object;
         CGSize contentSize = [(NSValue *)[change objectForKey:NSKeyValueChangeNewKey] CGSizeValue];
@@ -309,11 +319,7 @@ static __inline__ CGFloat MDPCPixel()
         if (newPage >= _numberOfPages) newPage = _numberOfPages-1;
     }
     
-    if (_scrollView) {
-        [_scrollView setContentOffset:CGPointMake(newPage*_scrollView.bounds.size.width, _scrollView.contentOffset.y) animated:YES];
-    } else {
-        self.currentPage = newPage;
-    }
+    [self setCurrentPage:newPage updateScrollView:(_scrollView != nil)];
     
     if (newPage != oldPage)
         [self sendActionsForControlEvents:UIControlEventValueChanged];
