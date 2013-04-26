@@ -188,8 +188,8 @@ static __inline__ CGFloat MDPCPixel()
 - (void)setScrollView:(UIScrollView *)scrollView
 {
     if (_scrollView) {
-        [scrollView removeObserver:self forKeyPath:@"contentOffset"];
-        [scrollView removeObserver:self forKeyPath:@"contentSize"];
+        [_scrollView removeObserver:self forKeyPath:@"contentOffset"];
+        [_scrollView removeObserver:self forKeyPath:@"contentSize"];
     }
     
     _scrollView = scrollView;
