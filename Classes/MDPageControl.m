@@ -149,13 +149,11 @@ static __inline__ CGFloat MDPCPixel()
 
 - (void)setCurrentPage:(CGFloat)currentPage updateScrollView:(BOOL)yn;
 {
-    if (_currentPage != currentPage) {
+    if (yn) {
+        [_scrollView setContentOffset:CGPointMake(currentPage*_scrollView.bounds.size.width, _scrollView.contentOffset.y) animated:YES];
+    } else if (_currentPage != currentPage) {
         _currentPage = currentPage;
         [self setNeedsDisplay];
-    }
-    
-    if (yn) {
-        [_scrollView setContentOffset:CGPointMake(_currentPage*_scrollView.bounds.size.width, _scrollView.contentOffset.y) animated:YES];
     }
 }
 
