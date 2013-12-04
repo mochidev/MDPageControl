@@ -55,3 +55,11 @@
 + (UIImage *)roundPageIndicatorWithSize:(CGSize)size;
 
 @end
+
+@protocol MDPageControlScrollViewDelegate <UIScrollViewDelegate>
+
+@optional
+
+- (void)scrollViewWillBeginScrollingAnimation:(UIScrollView *)scrollView;
+
+@end
