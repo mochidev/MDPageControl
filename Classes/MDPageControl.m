@@ -269,12 +269,20 @@ static __inline__ CGFloat MDPCPixel()
         UIScrollView *scrollView = object;
         CGPoint contentOffset = [(NSValue *)[change objectForKey:NSKeyValueChangeNewKey] CGPointValue];
         
-        [self setCurrentPage:contentOffset.x/scrollView.frame.size.width updateScrollView:NO];
+        if (scrollView.frame.size.width) {
+            [self setCurrentPage:contentOffset.x/scrollView.frame.size.width updateScrollView:NO];
+        } else {
+            [self setCurrentPage:0 updateScrollView:NO];
+        }
     } else if ([keyPath isEqualToString:@"contentSize"]) {
         UIScrollView *scrollView = object;
         CGSize contentSize = [(NSValue *)[change objectForKey:NSKeyValueChangeNewKey] CGSizeValue];
         
-        self.numberOfPages = roundf(contentSize.width/scrollView.frame.size.width);
+        if (scrollView.frame.size.width) {
+            self.numberOfPages = roundf(contentSize.width/scrollView.frame.size.width);
+        } else {
+            self.numberOfPages = 0;
+        }
     }
     
 //    if ([super respondsToSelector:@selector(observeValueForKeyPath:ofObject:change:context:)]) {
